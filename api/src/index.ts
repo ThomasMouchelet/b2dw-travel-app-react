@@ -50,7 +50,7 @@ app.get("/travels/:id", (req: Request, res: Response) => {
   console.log("end point get one (id): ", id);
 
   const sql = "SELECT * FROM travel WHERE id = ?";
-  const values = [Number(id)];
+  const values = [id];
   connection.query(sql, values, (error, results) => {
     if (error) {
       res.status(500).send({ error: "Error while fetching data" });
@@ -81,7 +81,36 @@ app.put("/travels/:id", (req: Request, res: Response) => {
 
 // Delete travel (app.delete) (/travels/:id)
 app.delete("/travels/:id", (req: Request, res: Response) => {
-  res.status(204).send({ message: "Success to delete" });
+  const { id } = req.params;
+  console.log("end point delete (id): ", id);
+
+  const sqlDelete = "DELETE FROM travel WHERE id = ?";
+  const sqlSelect = "SELECT * FROM travel WHERE id = ?";
+  const values = [id];
+
+  // Vérifier si l'id existe dans la base de données
+  connection.query(sqlSelect, values, (error, results) => {
+    if (error) {
+      res.status(500).send({ error: "Error while fetching data" });
+      return;
+    }
+    if (Array.isArray(results) && results.length === 0) {
+      res.status(404).send({ error: "Travel not found" });
+      return;
+    }
+  });
+
+  // Si l'id existe, on peut supprimer
+  connection.query(sqlDelete, values, (error, results) => {
+    if (error) {
+      res.status(500).send({ error: "Error while fetching data" });
+      return;
+    }
+
+    console.log("results", results);
+
+    res.status(200).send({ message: "Success to delete" });
+  });
 });
 
 app.listen(port, () => {
