@@ -35,7 +35,7 @@ const TravelSinglePage = () => {
   return (
     <div>
       <img src={travel?.image} alt="" />
-      <h1>{travel?.name}</h1>
+      <h1>{travel?.title}</h1>
 
       <button
         onClick={handleDelete}

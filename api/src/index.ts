@@ -1,104 +1,89 @@
 import express, { Request, Response } from "express";
-import cors from "cors"
+import cors from "cors";
+import mysql from "mysql2";
 
-const app = express()
-const port = 8000
+const app = express();
+const port = 8000;
 
-app.use(express.json())
-app.use(cors({
-  origin: 'http://localhost:5173'
-}))
+app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
 
-let travelList = [
-  {
-    "id": 1,
-    "name": "Paris",
-    "city": "Paris",
-    "country": "France",
-    "image": "https://www.planetware.com/wpimages/2020/02/france-in-pictures-beautiful-places-to-photograph-eiffel-tower.jpg",
-    "description": "Paris is known for its iconic landmarks like the Eiffel Tower, art museums like the Louvre, and its romantic atmosphere."
-  },
-  {
-    "id": 2,
-    "name": "New York City",
-    "city": "New York",
-    "country": "USA",
-    "image": "https://www.planetware.com/photos-large/USNY/new-york-city-empire-state-building.jpg",
-    "description": "New York City is famous for its skyline, Central Park, Times Square, and vibrant cultural life."
-  },
-]
+// Connection to the mysql database
+const connection = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "admin",
+  database: "travel_app",
+});
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello !');
-})
+connection.connect((err) => {
+  if (err) {
+    console.log(err);
+  } else {
+    console.log("Connected to the database");
+  }
+});
+
+app.get("/", (req: Request, res: Response) => {
+  res.send("Hello !");
+});
 
 // Get all travels (app.get) (/travels)
-app.get('/travels', (req: Request, res: Response) => {
-  res.send(travelList);
-})
+app.get("/travels", (req: Request, res: Response) => {
+  connection.query("SELECT * from travel", function (error, results) {
+    if (error) {
+      res.status(500).send({ error: "Error while fetching data" });
+      return;
+    }
+
+    res.status(200).send(results);
+  });
+});
 
 // Get One travel (app.get) (/travels/:id)
-app.get('/travels/:id', (req: Request, res: Response) => {
-  // get param id
-  const { id } = req.params 
-  // Find travel into array with param id
-  const travel = travelList.find(t => t.id === Number(id))
-  console.log(travel)
-  // send travel
+app.get("/travels/:id", (req: Request, res: Response) => {
+  const { id } = req.params;
+  console.log("end point get one (id): ", id);
 
-  if(!travel){
-    res.status(404).send({
-      message: "Travel not found"
-    })
-  }
+  const sql = "SELECT * FROM travel WHERE id = ?";
+  const values = [Number(id)];
+  connection.query(sql, values, (error, results) => {
+    if (error) {
+      res.status(500).send({ error: "Error while fetching data" });
+      return;
+    }
 
-  res.send(travel);
-})
+    if (Array.isArray(results) && results.length === 0) {
+      res.status(404).send({ error: "Travel not found" });
+      return;
+    }
+
+    if (Array.isArray(results) && results.length === 1) {
+      res.status(200).send(results[0]);
+      return;
+    }
+  });
+});
 
 // Create travel (app.post) (/travels)
-app.post('/travels', (req: Request, res: Response) => {
-  // Get data body
-  const travel = req.body
-  // Create id
-  const newId = travelList.length + 1
-  // Add data body into array
-  travel.id = newId
-  travelList.push(travel)
-  // Send data created
-  res.send(travel);
-})
+app.post("/travels", (req: Request, res: Response) => {
+  res.send("create");
+});
 
 // Update travel (app.put) (/travels/:id)
-app.put('/travels/:id', (req: Request, res: Response) => {
-  const { id } = req.params
-  const updateTravelData = req.body
-
-  const index = travelList.findIndex(t => t.id === Number(id));
-
-  travelList[index] = {
-    ...travelList[index],
-    ...updateTravelData
-  }
-
-  res.send(travelList[index]);
-})
+app.put("/travels/:id", (req: Request, res: Response) => {
+  res.send("update");
+});
 
 // Delete travel (app.delete) (/travels/:id)
-app.delete('/travels/:id', (req: Request, res: Response) => {
-  const { id } = req.params
-
-  const index = travelList.findIndex(t => t.id === Number(id));
-  console.log('index :' , index)
-
-  if(index === -1){
-    res.status(404).send({message: `Error travel with id ${id} not found`})
-  }
-  
-  travelList.splice(index, 1); // Supprime l'élément à l'index trouvé
-  
-  res.status(204).send({message: "Success to delete"})
-})
+app.delete("/travels/:id", (req: Request, res: Response) => {
+  res.status(204).send({ message: "Success to delete" });
+});
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+  console.log(`Example app listening on port ${port}`);
+});

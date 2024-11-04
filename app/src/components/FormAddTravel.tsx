@@ -35,8 +35,8 @@ const FormAddTravel = ({ fetchTravels }: FormAddTravelProps) => {
       <div>
         <input
           type="text"
-          name="name"
-          placeholder="Entrez un nom"
+          name="title"
+          placeholder="Entrez un titre"
           onChange={heandleChange}
           required
         />
