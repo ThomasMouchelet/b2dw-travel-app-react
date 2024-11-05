@@ -180,6 +180,10 @@ app.delete("/travels/:id", (req: Request, res: Response) => {
   });
 });
 
+app.get("/categories", (req, res) => {
+  res.send("Get all categories");
+});
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
