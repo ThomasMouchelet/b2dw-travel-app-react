@@ -118,9 +118,27 @@ app.put("/travels/:id", (req: Request, res: Response) => {
           ...req.body,
         };
 
-        // UPDATE REQUEST with newTravel params
-
         console.log("newTravel: ", newTravel);
+
+        const sqlUpdate =
+          "UPDATE travel SET title = ?, city = ?, country = ?, image = ?, description = ? WHERE id = ?";
+        const values = [
+          newTravel.title,
+          newTravel.city,
+          newTravel.country,
+          newTravel.image,
+          newTravel.description,
+          id,
+        ];
+
+        connection.query(sqlUpdate, values, (error, results) => {
+          if (error) {
+            res.status(500).send({ error: "Error while updating data" });
+            return;
+          }
+
+          res.status(200).send({ message: "Travel updated successfully" });
+        });
       }
     }
   );

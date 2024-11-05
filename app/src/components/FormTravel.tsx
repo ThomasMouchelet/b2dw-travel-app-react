@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { TravelDTO } from "../types/travel.type";
 import { create } from "../services/travel.service";
+import { useParams } from "react-router-dom";
 
-type FormAddTravelProps = {
-  fetchTravels: () => void;
+type FormTravelProps = {
+  fetchTravels?: () => void;
 };
 
-const FormAddTravel = ({ fetchTravels }: FormAddTravelProps) => {
+const FormTravel = ({ fetchTravels }: FormTravelProps) => {
   const [credentials, setCredentials] = useState<TravelDTO>({});
+  const { id } = useParams();
+
+  console.log("form travel id: ", id);
 
   const heandleChange = (e: React.ChangeEvent) => {
     const { name, value } = e.target;
@@ -23,8 +27,12 @@ const FormAddTravel = ({ fetchTravels }: FormAddTravelProps) => {
     console.log("Submit form", credentials);
 
     try {
-      await create(credentials);
-      fetchTravels();
+      if (id) {
+        await update();
+      } else {
+        await create(credentials);
+        fetchTravels();
+      }
     } catch (error) {
       console.log("Error : ", error);
     }
@@ -64,10 +72,10 @@ const FormAddTravel = ({ fetchTravels }: FormAddTravelProps) => {
           placeholder="Entrez une description"
           onChange={heandleChange}
         />
-        <input type="submit" value="Submit" />
+        <input type="submit" value={`${id ? "Editer" : "Ajouter"}`} />
       </div>
     </form>
   );
 };
 
-export default FormAddTravel;
+export default FormTravel;
