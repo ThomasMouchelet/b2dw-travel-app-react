@@ -11,7 +11,7 @@ const TravelSinglePage = () => {
 
   useEffect(() => {
     if (id) fetchTravel();
-  }, []);
+  }, [id]);
 
   const fetchTravel = async () => {
     try {
