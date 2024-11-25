@@ -1,11 +1,27 @@
+import { useEffect, useState } from "react";
+import { CommentType } from "../types/comment.type";
+import { findAll } from "../services/comment.service";
+import CommentShowItem from "./CommentShowItem";
+
 const CommentList = () => {
-    // state
+  const [comments, setComments] = useState<CommentType[]>([]);
 
-    // fetch (call service)
+  useEffect(() => {
+    fetAllComments();
+  }, []);
 
-    return ( 
-        // show list of comments
-     );
-}
- 
+  const fetAllComments = async () => {
+    try {
+      const data = await findAll();
+      setComments(data);
+    } catch (error) {
+      console.log("Error to fetch comments", error);
+    }
+  };
+
+  return comments.map((comment) => (
+    <CommentShowItem comment={comment} key={comment.id} />
+  ));
+};
+
 export default CommentList;

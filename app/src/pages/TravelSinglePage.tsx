@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { TravelType } from "../types/travel.type";
 import { findOneById, remove } from "../services/travel.service";
 import Button from "../components/Button";
+import CommentList from "../components/CommentList";
 
 const TravelSinglePage = () => {
   const { id } = useParams();
@@ -41,7 +42,9 @@ const TravelSinglePage = () => {
 
       <Button text="Delete" variant="danger" onClick={handleDelete} />
 
-      {/* Liste des comments */}
+      <CommentForm />
+
+      <CommentList />
     </div>
   );
 };
