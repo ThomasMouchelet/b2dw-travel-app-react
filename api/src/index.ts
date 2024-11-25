@@ -13,11 +13,11 @@ app.use(
     origin: "http://localhost:5173",
   })
 );
+app.use(LoggerService);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello !");
 });
-app.use(LoggerService);
 
 app.use("/comments", CommentController);
 app.use("/travels", TravelController);

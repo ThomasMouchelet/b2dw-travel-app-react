@@ -40,6 +40,8 @@ const TravelSinglePage = () => {
       <Link to={`/edit/${id}`}>Editer</Link>
 
       <Button text="Delete" variant="danger" onClick={handleDelete} />
+
+      {/* Liste des comments */}
     </div>
   );
 };

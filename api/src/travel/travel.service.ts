@@ -9,6 +9,7 @@ const getAll = async (req: Request, res: Response) => {
       return;
     }
 
+    console.log("results", results);
     res.status(200).send(results);
   });
 };
