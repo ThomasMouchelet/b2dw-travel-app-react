@@ -3,14 +3,22 @@ import connection from "../config/database.config";
 import { ResultSetHeader } from "mysql2";
 
 const getAll = async (req: Request, res: Response) => {
-  connection.query("SELECT * FROM comment", (err, results) => {
-    if (err) {
-      console.error("Error executing query:", err);
-      res.status(500).json({ error: "Internal Server Error" });
-      return;
+  console.log("queries : ", req.query);
+  const { travel_id } = req.query;
+
+  // WHERE travel_id = ?
+
+  connection.query(
+    "SELECT * FROM comment ORDER BY created_at DESC",
+    (err, results) => {
+      if (err) {
+        console.error("Error executing query:", err);
+        res.status(500).json({ error: "Internal Server Error" });
+        return;
+      }
+      res.json(results);
     }
-    res.json(results);
-  });
+  );
 };
 
 const getOne = async (req: Request, res: Response) => {
@@ -42,10 +50,11 @@ const getOne = async (req: Request, res: Response) => {
 
 const create = async (req: Request, res: Response) => {
   console.log(req.body);
-  const { pseudo, content } = req.body;
+  const { pseudo, content, travel_id } = req.body;
 
-  const sql = "INSERT INTO comment (pseudo, content) VALUES (?, ?)";
-  const values = [pseudo, content];
+  const sql =
+    "INSERT INTO comment (pseudo, content, travel_id) VALUES (?, ?, ?)";
+  const values = [pseudo, content, travel_id];
 
   connection.query(sql, values, (err, results: ResultSetHeader) => {
     if (err) {
@@ -58,6 +67,7 @@ const create = async (req: Request, res: Response) => {
       id: results.insertId,
       pseudo,
       content,
+      travel_id,
     });
   });
 };
