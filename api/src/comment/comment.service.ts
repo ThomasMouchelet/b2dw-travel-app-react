@@ -3,11 +3,6 @@ import connection from "../config/database.config";
 import { ResultSetHeader } from "mysql2";
 
 const getAll = async (req: Request, res: Response) => {
-  console.log("queries : ", req.query);
-  const { travel_id } = req.query;
-
-  // WHERE travel_id = ?
-
   connection.query(
     "SELECT * FROM comment ORDER BY created_at DESC",
     (err, results) => {
@@ -19,6 +14,20 @@ const getAll = async (req: Request, res: Response) => {
       res.json(results);
     }
   );
+};
+
+const getManyByTravelId = async (req: Request, res: Response) => {
+  console.log("end point get many by travel id: ", req.params.id);
+  const sql = "SELECT * FROM comment WHERE travel_id = ?";
+  connection.query(sql, [req.params.id], (err, results) => {
+    if (err) {
+      console.error("Error executing query:", err);
+      res.status(500).json({ error: "Internal Server Error" });
+      return;
+    }
+    res.json(results);
+    return;
+  });
 };
 
 const getOne = async (req: Request, res: Response) => {
@@ -76,4 +85,5 @@ export default {
   getAll,
   getOne,
   create,
+  getManyByTravelId,
 };

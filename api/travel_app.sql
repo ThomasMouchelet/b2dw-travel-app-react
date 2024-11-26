@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Hôte : db
--- Généré le : lun. 25 nov. 2024 à 08:11
--- Version du serveur : 8.0.40
--- Version de PHP : 8.2.8
+-- Hôte : database
+-- Généré le : lun. 25 nov. 2024 à 12:30
+-- Version du serveur : 9.1.0
+-- Version de PHP : 8.2.25
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,16 +18,16 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données : `travel_db`
+-- Base de données : `travel_app`
 --
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `categories`
+-- Structure de la table `categorie`
 --
 
-CREATE TABLE `categories` (
+CREATE TABLE `categorie` (
   `id` int NOT NULL,
   `name` varchar(128) NOT NULL,
   `description` varchar(256) NOT NULL,
@@ -36,10 +36,10 @@ CREATE TABLE `categories` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Déchargement des données de la table `categories`
+-- Déchargement des données de la table `categorie`
 --
 
-INSERT INTO `categories` (`id`, `name`, `description`, `createdAt`, `updatedAt`) VALUES
+INSERT INTO `categorie` (`id`, `name`, `description`, `createdAt`, `updatedAt`) VALUES
 (1, 'Adventure', 'Exciting and adventurous trips', '2024-11-04 15:29:52', '2024-11-04 15:29:52'),
 (2, 'Relaxation', 'Relaxing and peaceful trips', '2024-11-04 15:37:17', '2024-11-04 15:37:17'),
 (3, 'Cultural', 'Trips to explore different cultures', '2024-11-04 15:37:34', '2024-11-04 15:37:34'),
@@ -49,25 +49,32 @@ INSERT INTO `categories` (`id`, `name`, `description`, `createdAt`, `updatedAt`)
 -- --------------------------------------------------------
 
 --
--- Structure de la table `comments`
+-- Structure de la table `comment`
 --
 
-CREATE TABLE `comments` (
-  `id` int UNSIGNED NOT NULL,
-  `pseudo` varchar(128) NOT NULL,
-  `content` varchar(128) NOT NULL,
-  `travel_id` int NOT NULL,
-  `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `comment` (
+  `id` int NOT NULL,
+  `pseudo` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `content` text COLLATE utf8mb4_general_ci NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `travel_id` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `comment`
+--
+
+INSERT INTO `comment` (`id`, `pseudo`, `content`, `created_at`, `travel_id`) VALUES
+(8, 'Postman', 'Comment test', '2024-11-25 10:54:20', 1),
+(9, 'Postman travel 2', 'Comment test', '2024-11-25 10:54:44', 2);
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `travels`
+-- Structure de la table `travel`
 --
 
-CREATE TABLE `travels` (
+CREATE TABLE `travel` (
   `id` int NOT NULL,
   `name` varchar(128) NOT NULL,
   `city` varchar(128) NOT NULL,
@@ -80,10 +87,10 @@ CREATE TABLE `travels` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Déchargement des données de la table `travels`
+-- Déchargement des données de la table `travel`
 --
 
-INSERT INTO `travels` (`id`, `name`, `city`, `country`, `image`, `description`, `createdAt`, `updatedAt`, `category_id`) VALUES
+INSERT INTO `travel` (`id`, `name`, `city`, `country`, `image`, `description`, `createdAt`, `updatedAt`, `category_id`) VALUES
 (1, 'Paris', 'Paris', 'France', 'https://www.planetware.com/wpimages/2020/02/france-in-pictures-beautiful-places-to-photograph-eiffel-tower.jpg', 'Paris is known for its iconic landmarks like the Eiffel Tower, art museums like the Louvre, and its romantic atmosphere.', '2024-10-22 08:00:47', '2024-11-06 09:58:02', 2),
 (2, 'New York City', 'New York', 'USA', 'https://www.planetware.com/photos-large/USNY/new-york-city-empire-state-building.jpg', 'New York City is famous for its skyline, Central Park, Times Square, and vibrant cultural life.', '2024-10-22 08:00:47', '2024-11-06 09:58:09', 2),
 (3, 'Tokyo', 'Tokyo', 'Japan', 'https://media.istockphoto.com/id/904453184/fr/photo/image-composite-du-mont-fuji-et-de-la-ligne-dhorizon-de-tokyo.jpg?b=1&s=612x612&w=0&k=20&c=AB66xq2ZbKINH39D9tiH08yJrY2yU9pyd4W-7fhlbKc=', 'Tokyo is a bustling metropolis with cutting-edge technology, traditional temples, and an exciting nightlife.', '2024-10-22 08:04:42', '2024-11-06 09:58:18', 3),
@@ -101,22 +108,22 @@ INSERT INTO `travels` (`id`, `name`, `city`, `country`, `image`, `description`, 
 --
 
 --
--- Index pour la table `categories`
+-- Index pour la table `categorie`
 --
-ALTER TABLE `categories`
+ALTER TABLE `categorie`
   ADD PRIMARY KEY (`id`);
 
 --
--- Index pour la table `comments`
+-- Index pour la table `comment`
 --
-ALTER TABLE `comments`
+ALTER TABLE `comment`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `travel_id` (`travel_id`);
+  ADD KEY `travel` (`travel_id`);
 
 --
--- Index pour la table `travels`
+-- Index pour la table `travel`
 --
-ALTER TABLE `travels`
+ALTER TABLE `travel`
   ADD PRIMARY KEY (`id`),
   ADD KEY `category_id` (`category_id`);
 
@@ -125,21 +132,21 @@ ALTER TABLE `travels`
 --
 
 --
--- AUTO_INCREMENT pour la table `categories`
+-- AUTO_INCREMENT pour la table `categorie`
 --
-ALTER TABLE `categories`
+ALTER TABLE `categorie`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT pour la table `comments`
+-- AUTO_INCREMENT pour la table `comment`
 --
-ALTER TABLE `comments`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+ALTER TABLE `comment`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
--- AUTO_INCREMENT pour la table `travels`
+-- AUTO_INCREMENT pour la table `travel`
 --
-ALTER TABLE `travels`
+ALTER TABLE `travel`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
@@ -147,16 +154,16 @@ ALTER TABLE `travels`
 --
 
 --
--- Contraintes pour la table `comments`
+-- Contraintes pour la table `comment`
 --
-ALTER TABLE `comments`
-  ADD CONSTRAINT `travel_id` FOREIGN KEY (`travel_id`) REFERENCES `travels` (`id`) ON DELETE CASCADE;
+ALTER TABLE `comment`
+  ADD CONSTRAINT `travel` FOREIGN KEY (`travel_id`) REFERENCES `travel` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
 
 --
--- Contraintes pour la table `travels`
+-- Contraintes pour la table `travel`
 --
-ALTER TABLE `travels`
-  ADD CONSTRAINT `category_id` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
+ALTER TABLE `travel`
+  ADD CONSTRAINT `category_id` FOREIGN KEY (`category_id`) REFERENCES `categorie` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

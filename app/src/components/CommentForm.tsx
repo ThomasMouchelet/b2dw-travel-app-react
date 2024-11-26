@@ -3,11 +3,15 @@ import Button from "./Button";
 import Input from "./Input";
 import { CommentDTO } from "../types/comment.type";
 import { create } from "../services/comment.service";
+import { useParams } from "react-router-dom";
 
 const CommentForm = () => {
+  const { id } = useParams();
+
   const [credentials, setCredentials] = useState<CommentDTO>({
     pseudo: "",
     content: "",
+    travel_id: Number(id),
   });
 
   const heandleChange = (e: React.ChangeEvent) => {
@@ -39,7 +43,7 @@ const CommentForm = () => {
       />
       <Input
         type="text"
-        placeholder="Votre commetaire"
+        placeholder="Votre commentaire"
         name="content"
         onChange={heandleChange}
       />

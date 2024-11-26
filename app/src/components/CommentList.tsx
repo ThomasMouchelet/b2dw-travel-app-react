@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { CommentType } from "../types/comment.type";
-import { findAll } from "../services/comment.service";
+import { findManyByTravelId } from "../services/comment.service";
 import CommentShowItem from "./CommentShowItem";
+import { useParams } from "react-router-dom";
 
 const CommentList = () => {
+  const { id } = useParams();
   const [comments, setComments] = useState<CommentType[]>([]);
 
   useEffect(() => {
@@ -12,7 +14,7 @@ const CommentList = () => {
 
   const fetAllComments = async () => {
     try {
-      const data = await findAll();
+      const data = await findManyByTravelId(Number(id));
       setComments(data);
     } catch (error) {
       console.log("Error to fetch comments", error);
